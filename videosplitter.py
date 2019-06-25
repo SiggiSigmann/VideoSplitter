@@ -2,8 +2,6 @@ import cv2      #used for video handling
 import os       #used for check and crate folder
 import sys      #used for progressbar
 
-videoInPath = "./tobi.mp4"
-pictureOutPath = "./data1"
 maxNumberOfImages = 100
 progressBarLen = 40
 
@@ -16,12 +14,30 @@ def progressBar(current, total, comment=''):
     sys.stdout.write('[%s] %s%% %s\r' % (fillerString, percents, comment))
     sys.stdout.flush()
 
+if len(sys.argv)==1:
+    print("-s: Sourcefile, -o Output, -p max Pictures(default = 100)")
+    exit(1)
+else:
+    lastarg = ""
+    for arg in sys.argv:
+        if lastarg == "-s":
+            videoInPath = arg
+            print(videoInPath)
+        elif lastarg == "-o":
+            pictureOutPath = arg
+        elif lastarg == "-p":
+            maxNumberOfImages = int(arg)
+        
+        lastarg = arg
+    
 if  os.path.exists(videoInPath):
     cam = cv2.VideoCapture(videoInPath)
     print("Open: " + videoInPath)
 else:
     print("Video don't exists")
     exit(1)
+
+
 
 length = int(cam.get(cv2.CAP_PROP_FRAME_COUNT))     #get amount of frames
 setSkipper= int(length/maxNumberOfImages)
@@ -57,7 +73,7 @@ while(True):
             break
     skipper +=1
     
-arprogressBar(maxNumberOfImages,maxNumberOfImages,"create: frame"+str(currentframe-1)+".jpg")
+progressBar(maxNumberOfImages,maxNumberOfImages,"create: frame"+str(currentframe-1)+".jpg")
 print()
 
 # Release all space and windows once done 
